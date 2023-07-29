@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Notiflix from 'notiflix';
 
@@ -16,12 +16,9 @@ export const App = () => {
   const [isModal, setIsModal] = useState(false);
   const [modalData, setModalData] = useState({});
   const [showLoadMore, setShowLoadMore] = useState(false);
-
-  const request = {
-    API: 'https://pixabay.com/api/',
-    KEY: '36940182-0da281a971cf517379f0112d8',
-    per_page: 12,
-  };
+  const per_page = 12;
+  const API = 'https://pixabay.com/api/';
+  const KEY = '36940182-0da281a971cf517379f0112d8';
 
   const onSubmit = e => {
     e.preventDefault();
@@ -36,9 +33,7 @@ export const App = () => {
     }
   };
 
-  const fetchImages = async () => {
-    const { API, KEY, per_page } = request;
-
+  const fetchImages = useCallback(async () => {
     const searchParams = new URLSearchParams({
       q: value,
       page: page,
@@ -82,13 +77,13 @@ export const App = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [API, KEY, page, value]);
 
   useEffect(() => {
     if (value !== '') {
       fetchImages();
     }
-  }, [page, value]);
+  }, [fetchImages, value]);
 
   const onClick = () => {
     setPage(prevPage => prevPage + 1);
